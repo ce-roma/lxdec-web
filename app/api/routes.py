@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import RedirectResponse
 
 from app.core.config import settings
@@ -26,9 +26,23 @@ def get_manifest() -> dict[str, Any]:
     return _manifest_cache
 
 
+def apply_edge_cache(response: Response) -> None:
+    """Enable Vercel / CDN Edge caching in production while keeping instant reload in local dev."""
+    if settings.env.lower() == "production":
+        response.headers["Cache-Control"] = (
+            "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+        )
+    else:
+        response.headers["Cache-Control"] = "no-cache"
+
+
 @router.get("/topology")
-async def get_topology(category: str | None = Query(default=None, description="Filter by category ID")) -> dict[str, Any]:
+async def get_topology(
+    response: Response,
+    category: str | None = Query(default=None, description="Filter by category ID"),
+) -> dict[str, Any]:
     """Return the full D3.js topology graph (nodes, links, categories, and release info)."""
+    apply_edge_cache(response)
     manifest = get_manifest()
     nodes = manifest["nodes"]
     links = manifest["links"]
@@ -64,8 +78,9 @@ async def get_topology(category: str | None = Query(default=None, description="F
 
 
 @router.get("/node/{node_id}")
-async def get_node_detail(node_id: str) -> dict[str, Any]:
+async def get_node_detail(node_id: str, response: Response) -> dict[str, Any]:
     """Return technical specifications and connected neighbors for a single topology node."""
+    apply_edge_cache(response)
     manifest = get_manifest()
     node = next((n for n in manifest["nodes"] if n["id"] == node_id), None)
     if not node:
@@ -83,8 +98,9 @@ async def get_node_detail(node_id: str) -> dict[str, Any]:
 
 
 @router.get("/release")
-async def get_release_info() -> dict[str, Any]:
+async def get_release_info(response: Response) -> dict[str, Any]:
     """Return metadata and checksums for the latest ISO build."""
+    apply_edge_cache(response)
     return {
         "distro_name": settings.distro_name,
         "version": settings.distro_version,
@@ -99,4 +115,7 @@ async def get_release_info() -> dict[str, Any]:
 @router.get("/download/latest")
 async def download_latest_iso() -> RedirectResponse:
     """Offload ISO bandwidth to GitHub Releases or S3 via HTTP 302 Redirect."""
-    return RedirectResponse(url=settings.iso_download_url, status_code=302)
+    headers = {}
+    if settings.env.lower() == "production":
+        headers["Cache-Control"] = "public, max-age=300, s-maxage=1800"
+    return RedirectResponse(url=settings.iso_download_url, status_code=302, headers=headers)

@@ -33,4 +33,11 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 @app.get("/", include_in_schema=False)
 async def serve_index() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
+    headers = {}
+    if settings.env.lower() == "production":
+        headers["Cache-Control"] = (
+            "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+        )
+    else:
+        headers["Cache-Control"] = "no-cache"
+    return FileResponse(STATIC_DIR / "index.html", headers=headers)
