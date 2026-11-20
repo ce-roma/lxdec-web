@@ -90,10 +90,34 @@ function setupLayoutSwitcher() {
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const layout = btn.dataset.layout;
-      buttons.forEach((b) => b.classList.toggle("active", b === btn));
+      buttons.forEach((b) =>
+        b.classList.toggle("active", b.dataset.layout === layout)
+      );
       applyLayout(layout);
     });
   });
+
+  // Mobile inspector drawer controls
+  const inspector = document.getElementById("inspector-panel");
+  const closeBtn = document.getElementById("close-inspector-btn");
+  const toggleBtn = document.getElementById("btn-mobile-inspector");
+  const sheetHandle = document.getElementById("mobile-sheet-toggle");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      inspector.classList.remove("mobile-open");
+    });
+  }
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      inspector.classList.toggle("mobile-open");
+    });
+  }
+  if (sheetHandle) {
+    sheetHandle.addEventListener("click", () => {
+      inspector.classList.toggle("mobile-open");
+    });
+  }
 }
 
 function applyCategoryFilter(categoryId) {
@@ -200,7 +224,7 @@ function initGraph() {
     )
     .on("click", (event, d) => {
       event.stopPropagation();
-      selectNodeById(d.id);
+      selectNodeById(d.id, true);
     })
     .on("mouseenter", (event, d) => showTooltip(event, d))
     .on("mousemove", (event) => moveTooltip(event))
@@ -276,12 +300,45 @@ function initGraph() {
   state.nodesData = nodes;
   state.linksData = links;
 
+  // Close mobile inspector sheet when tapping empty canvas area
+  svg.on("click", () => {
+    const inspector = document.getElementById("inspector-panel");
+    if (inspector) inspector.classList.remove("mobile-open");
+  });
+
   // Initialize with default Force layout
   applyLayout("force");
 
-  document.getElementById("btn-reset-zoom").addEventListener("click", () => {
-    svg.transition().duration(500).call(zoomBehavior.transform, d3.zoomIdentity);
-  });
+  // Auto fit zoom on narrow mobile screens so the whole topology fits comfortably
+  if (width < 820) {
+    const initialScale = Math.max(0.48, Math.min(0.72, width / 920));
+    const tx = (width - width * initialScale) / 2;
+    const ty = (height - height * initialScale) / 2;
+    svg.call(
+      zoomBehavior.transform,
+      d3.zoomIdentity.translate(tx, ty).scale(initialScale)
+    );
+  }
+
+  const resetZoomFn = () => {
+    if (state.width < 820) {
+      const s = Math.max(0.48, Math.min(0.72, state.width / 920));
+      const tx = (state.width - state.width * s) / 2;
+      const ty = (state.height - state.height * s) / 2;
+      svg
+        .transition()
+        .duration(450)
+        .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx, ty).scale(s));
+    } else {
+      svg.transition().duration(500).call(zoomBehavior.transform, d3.zoomIdentity);
+    }
+  };
+
+  document.getElementById("btn-reset-zoom").addEventListener("click", resetZoomFn);
+  const mobileCenterBtn = document.getElementById("btn-mobile-center");
+  if (mobileCenterBtn) {
+    mobileCenterBtn.addEventListener("click", resetZoomFn);
+  }
 
   document.getElementById("btn-unpin").addEventListener("click", () => {
     nodes.forEach((n) => {
@@ -297,7 +354,8 @@ function applyLayout(layoutName) {
   const sim = state.simulation;
   const nodes = state.nodesData;
   const links = state.linksData;
-  const cx = state.width / 2 - 35;
+  const isMobile = state.width < 820;
+  const cx = isMobile ? state.width / 2 : state.width / 2 - 35;
   const cy = state.height / 2;
 
   // Clear pinned positions and previous guides
@@ -517,10 +575,15 @@ function applyLayout(layoutName) {
   sim.alpha(0.95).restart();
 }
 
-function selectNodeById(nodeId) {
+function selectNodeById(nodeId, openMobileDrawer = false) {
   state.selectedNodeId = nodeId;
   const node = state.topology.nodes.find((n) => n.id === nodeId);
   if (!node) return;
+
+  if (openMobileDrawer && window.innerWidth <= 820) {
+    const inspector = document.getElementById("inspector-panel");
+    if (inspector) inspector.classList.add("mobile-open");
+  }
 
   const catColor = state.categoryColors[node.category] || "#38bdf8";
   const catLabel = state.categoryLabels[node.category] || node.category;

@@ -117,14 +117,34 @@
       <div id="graph-tooltip" class="graph-tooltip hidden"></div>
     </div>
 
-    <!-- Right Node Inspector Drawer -->
+    <!-- Mobile Floating Layout & Controls Bar (visible on phones/tablets) -->
+    <div class="mobile-toolbar" id="mobile-toolbar">
+      <div class="mobile-layout-pills">
+        <button class="layout-btn active" data-layout="force">✦ Force</button>
+        <button class="layout-btn" data-layout="concentric">◎ Anillos</button>
+        <button class="layout-btn" data-layout="hierarchical">☰ Capas</button>
+        <button class="layout-btn" data-layout="clustered">❖ Islas</button>
+      </div>
+      <div class="mobile-action-btns">
+        <button id="btn-mobile-center" class="btn-secondary" title="Centrar Grafo">⌖</button>
+        <button id="btn-mobile-inspector" class="btn-secondary" title="Mostrar/Ocultar Detalles">ⓘ Info</button>
+      </div>
+    </div>
+
+    <!-- Right Node Inspector Drawer (Bottom Sheet on Mobile) -->
     <aside class="hud-panel hud-right" id="inspector-panel">
+      <div class="mobile-sheet-handle" id="mobile-sheet-toggle">
+        <span class="sheet-bar"></span>
+      </div>
       <div class="inspector-header">
         <div>
           <span class="inspector-category" id="insp-category">CORE SYSTEM</span>
           <h2 class="inspector-title" id="insp-title">Selecciona un nodo</h2>
         </div>
-        <span class="version-tag mono" id="insp-version">v26.11-deb12</span>
+        <div class="inspector-header-right">
+          <span class="version-tag mono" id="insp-version">v26.11-deb12</span>
+          <button class="btn-close-inspector" id="close-inspector-btn" title="Cerrar panel">&times;</button>
+        </div>
       </div>
 
       <p class="inspector-role" id="insp-role"></p>
