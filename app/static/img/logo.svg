@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 128" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Outer D Helmet Gradient: Core Cyan (#38bdf8) to Electric Blue (#60a5fa) -->
+    <linearGradient id="robot-helmet-d" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+
+    <!-- Inner E/C Visor Gradient: Accent Purple (#a855f7) to Cyan (#38bdf8) -->
+    <linearGradient id="robot-visor-ec" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+
+    <linearGradient id="robot-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.55" />
+    </linearGradient>
+
+    <filter id="robot-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Page Dark Background Plate (bg-deep: #070b14) -->
+  <rect
+    x="3"
+    y="3"
+    width="146"
+    height="122"
+    rx="26"
+    fill="#070b14"
+    stroke="url(#robot-border)"
+    stroke-width="2.8"
+  />
+
+  <g filter="url(#robot-glow)">
+    <!-- 1. OUTER ROBOT HELMET: Horizontal Capital 'D' (and lower 'C' curve) -->
+    <path
+      fill-rule="evenodd"
+      d="M 21 19
+         H 131
+         V 62
+         C 131 90, 107 106, 76 106
+         C 45 106, 21 90, 21 62
+         Z
+
+         M 34 33
+         H 118
+         V 61
+         C 118 81, 100 92, 76 92
+         C 52 92, 34 81, 34 61
+         Z"
+      fill="url(#robot-helmet-d)"
+    />
+
+    <!-- 2. INNER ROBOT VISOR / EYES: Upward-facing Capital 'E' (containing 'C' frame) -->
+    <!-- Outer C-bracket of the E -->
+    <path
+      d="M 49 39
+         H 56
+         V 68
+         H 96
+         V 39
+         H 103
+         V 75
+         H 49
+         Z"
+      fill="url(#robot-visor-ec)"
+    />
+    <!-- Center E tongue (slightly shorter, emphasizing the E + C duality and robot eyes) -->
+    <rect
+      x="72.5"
+      y="41"
+      width="7"
+      height="28"
+      fill="#a855f7"
+    />
+  </g>
+</svg>

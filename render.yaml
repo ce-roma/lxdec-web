@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: lxdec-os-portal
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      - key: ENV
+        value: production
+      - key: PORT
+        value: "8080"
+      - key: DISTRO_NAME
+        value: "LXDEC OS"
+      - key: DISTRO_VERSION
+        value: "26.11-deb12"
+      - key: ISO_DOWNLOAD_URL
+        value: "https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb12-amd64.iso"
+

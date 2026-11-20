@@ -1,0 +1,62 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lxdec-web
+    restart: unless-stopped
+    ports:
+      - "${LOCAL_PORT:-8080}:8080"
+    volumes:
+      - ./app:/workspace/app:ro
+    environment:
+      - ENV=${ENV:-development}
+      - PORT=8080
+      - DISTRO_NAME=${DISTRO_NAME:-LXDEC OS}
+      - DISTRO_VERSION=${DISTRO_VERSION:-26.11-deb12}
+      - ISO_DOWNLOAD_URL=${ISO_DOWNLOAD_URL:-https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb12-amd64.iso}
+      - ISO_SHA256=${ISO_SHA256:-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lxdec.rule=Host(`${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.lxdec.entrypoints=websecure"
+      - "traefik.http.routers.lxdec.tls.certresolver=letsencrypt"
+      - "traefik.http.services.lxdec.loadbalancer.server.port=8080"
+    networks:
+      - lxdec_net
+
+  # Optional profile: Run `docker compose --profile vps up -d` when deploying on a raw VPS with Traefik
+  traefik:
+    image: traefik:v3.1
+    container_name: lxdec-proxy
+    profiles: ["vps"]
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - "--api.dashboard=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=lxdec_net"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http3"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443/tcp"
+      - "443:443/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/acme.json:/letsencrypt/acme.json
+    networks:
+      - lxdec_net
+
+networks:
+  lxdec_net:
+    name: lxdec_net
+    driver: bridge

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LXDEC OS // System & Data Stack Topology</title>
+  <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+</head>
+<body>
+  <!-- Top Command & Telemetry Header -->
+  <header class="hud-header">
+    <div class="brand-block">
+      <img src="/static/img/logo.svg" alt="LXDEC Logo (D-e-c)" class="brand-logo" />
+      <div class="arch-badge">LXDEC // 26.11</div>
+      <div>
+        <h1 class="brand-title">LXDEC <span class="accent">OS</span></h1>
+        <p class="brand-subtitle" id="distro-tagline">Cargando topología del sistema...</p>
+      </div>
+    </div>
+
+    <div class="filter-bar" id="category-filters">
+      <button class="filter-pill active" data-category="all">Toda la Topología</button>
+    </div>
+
+    <div class="header-actions">
+      <div class="search-box">
+        <span class="prompt-symbol">/</span>
+        <input type="text" id="node-search" placeholder="Filtrar nodo (ej. pgdg, duckdb, odbc, ebpf)..." autocomplete="off" />
+      </div>
+      <button class="btn-iso" id="open-iso-modal">
+        <span class="status-dot"></span>
+        <span>GET ISO</span>
+        <code id="header-version">26.11-deb12</code>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Interactive Viewport -->
+  <main class="viewport">
+    <!-- Left Floating Telemetry & Legend HUD -->
+    <aside class="hud-panel hud-left">
+      <div class="panel-section">
+        <div class="section-header">
+          <span class="mono-label">SYSTEM METADATA</span>
+          <span class="live-pill">LIVE-BUILD + CALAMARES</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="telemetry-item">
+            <span class="t-label">BASE</span>
+            <span class="t-val" id="meta-base">Debian 12 (Deriv.)</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">KERNEL</span>
+            <span class="t-val mono" id="meta-kernel">6.11-bpo-amd64</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">ARCH</span>
+            <span class="t-val mono" id="meta-arch">amd64 / arm64</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="t-label">SUBSISTEMAS</span>
+            <span class="t-val mono" id="meta-count">14 Nodos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">
+          <span class="mono-label">PLANTILLA DEL GRAFO (LAYOUT)</span>
+        </div>
+        <div class="layout-switcher" id="layout-switcher">
+          <button class="layout-btn active" data-layout="force" title="Física orgánica dirigida por fuerzas">
+            <span class="layout-icon">✦</span> Force
+          </button>
+          <button class="layout-btn" data-layout="concentric" title="Anillos concéntricos alrededor del Kernel (OS Rings)">
+            <span class="layout-icon">◎</span> Concéntrico
+          </button>
+          <button class="layout-btn" data-layout="hierarchical" title="Arquitectura jerárquica por capas de abstracción">
+            <span class="layout-icon">☰</span> Jerárquico
+          </button>
+          <button class="layout-btn" data-layout="clustered" title="Islas agrupadas por rol / especialidad">
+            <span class="layout-icon">❖</span> Clústeres
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-header">
+          <span class="mono-label">CAPAS DE ARQUITECTURA</span>
+        </div>
+        <ul class="legend-list" id="legend-list"></ul>
+      </div>
+
+      <div class="panel-section controls-hint">
+        <div class="section-header">
+          <span class="mono-label">CONTROLES DEL GRAFO</span>
+        </div>
+        <p class="hint-text">
+          • <strong>Clic en un nodo:</strong> Inspeccionar paquetes <code>.deb</code>, repositorios oficiales, tuning del kernel y comandos.<br/>
+          • <strong>Arrastrar nodo:</strong> Fijar/reorganizar física de la topología.<br/>
+          • <strong>Scroll / Pinch:</strong> Zoom sobre subsistemas.
+        </p>
+        <div class="graph-btn-row">
+          <button id="btn-reset-zoom" class="btn-secondary">Centrar Grafo</button>
+          <button id="btn-unpin" class="btn-secondary">Liberar Nodos</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- D3.js SVG Canvas -->
+    <div id="graph-container" class="graph-canvas">
+      <div id="graph-tooltip" class="graph-tooltip hidden"></div>
+    </div>
+
+    <!-- Right Node Inspector Drawer -->
+    <aside class="hud-panel hud-right" id="inspector-panel">
+      <div class="inspector-header">
+        <div>
+          <span class="inspector-category" id="insp-category">CORE SYSTEM</span>
+          <h2 class="inspector-title" id="insp-title">Selecciona un nodo</h2>
+        </div>
+        <span class="version-tag mono" id="insp-version">v26.11-deb12</span>
+      </div>
+
+      <p class="inspector-role" id="insp-role"></p>
+      <p class="inspector-summary" id="insp-summary"></p>
+
+      <div class="inspector-block">
+        <span class="mono-label">PAQUETES PREINSTALADOS (APT / PGDG / BOOKWORM MAIN)</span>
+        <div class="code-box">
+          <code id="insp-package">sudo apt install -y linux-image-amd64 systemd-sysv procps</code>
+          <button class="copy-btn" id="copy-pkg-btn" title="Copiar comando apt">COPIAR</button>
+        </div>
+      </div>
+
+      <div class="inspector-block">
+        <span class="mono-label">ESPECIFICACIONES & TUNING DE INGENIERÍA</span>
+        <ul class="specs-list" id="insp-specs"></ul>
+      </div>
+
+      <div class="inspector-block">
+        <span class="mono-label">VERIFICACIÓN EN TERMINAL</span>
+        <div class="code-box terminal-box">
+          <span class="term-prompt">root@lxdec-os:~#</span>
+          <code id="insp-cli">pg_lsclusters</code>
+        </div>
+      </div>
+
+      <div class="inspector-block">
+        <span class="mono-label">INTERCONEXIONES DEL SUBSISTEMA</span>
+        <div class="connections-chips" id="insp-connections"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ISO Download & Checksum Verification Modal -->
+  <div class="modal-backdrop hidden" id="iso-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="mono-label">LIVE-BUILD + CALAMARES INSTALLER (302 OFFLOAD)</span>
+          <h3>Descargar Imagen ISO de LXDEC OS</h3>
+        </div>
+        <button class="modal-close" id="close-iso-modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc">
+          Imagen ISO híbrida construida con <strong><code>live-build</code></strong> e instalador gráfico <strong>Calamares</strong>. Incluye perfiles de particionado <strong>XFS (OLTP)</strong> y <strong>OpenZFS (OLAP)</strong>, repositorios oficiales <strong>PGDG</strong> y todo el árbol de herramientas visualizado en el grafo.
+        </p>
+
+        <div class="iso-meta-grid">
+          <div>
+            <span class="t-label">VERSIÓN</span>
+            <strong class="mono" id="modal-version">26.11-deb12</strong>
+          </div>
+          <div>
+            <span class="t-label">TAMAÑO</span>
+            <strong class="mono" id="modal-size">2,640 MB</strong>
+          </div>
+          <div>
+            <span class="t-label">KERNEL</span>
+            <strong class="mono" id="modal-kernel">6.11-bpo-amd64</strong>
+          </div>
+        </div>
+
+        <div class="inspector-block">
+          <span class="mono-label">SHA-256 CHECKSUM</span>
+          <div class="code-box">
+            <code id="modal-sha256">9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</code>
+            <button class="copy-btn" id="copy-sha-btn">COPIAR</button>
+          </div>
+        </div>
+
+        <div class="inspector-block">
+          <span class="mono-label">DESCARGA DIRECTA DESDE CLI</span>
+          <div class="code-box terminal-box">
+            <code id="modal-curl-cmd">curl -fLO http://localhost:8080/api/v1/download/latest</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="/api/v1/download/latest" target="_blank" rel="noopener" class="btn-download-primary">
+          Descargar ISO vía GitHub Releases / S3 &rarr;
+        </a>
+        <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.65rem; text-align: center; line-height: 1.4;">
+          LXDEC OS es una distribución derivada independiente basada en Debian GNU/Linux. No está afiliada ni respaldada oficialmente por Software in the Public Interest, Inc. ni por el Proyecto Debian.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

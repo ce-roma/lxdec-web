@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+traefik/acme.json
+*.iso
+.DS_Store
+
