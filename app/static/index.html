@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,10 +8,13 @@
   <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/static/css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 </head>
+
 <body>
   <!-- Top Command & Telemetry Header -->
   <header class="hud-header">
@@ -23,14 +27,11 @@
       </div>
     </div>
 
-    <div class="filter-bar" id="category-filters">
-      <button class="filter-pill active" data-category="all">Toda la Topología</button>
-    </div>
-
     <div class="header-actions">
       <div class="search-box">
         <span class="prompt-symbol">/</span>
-        <input type="text" id="node-search" placeholder="Filtrar nodo (ej. pgdg, duckdb, odbc, ebpf)..." autocomplete="off" />
+        <input type="text" id="node-search" placeholder="Filtrar nodo (ej. pgdg, duckdb, odbc, ebpf)..."
+          autocomplete="off" />
       </div>
       <button class="btn-iso" id="open-iso-modal">
         <span class="status-dot"></span>
@@ -77,10 +78,12 @@
           <button class="layout-btn active" data-layout="force" title="Física orgánica dirigida por fuerzas">
             <span class="layout-icon">✦</span> Force
           </button>
-          <button class="layout-btn" data-layout="concentric" title="Anillos concéntricos alrededor del Kernel (OS Rings)">
+          <button class="layout-btn" data-layout="concentric"
+            title="Anillos concéntricos alrededor del Kernel (OS Rings)">
             <span class="layout-icon">◎</span> Concéntrico
           </button>
-          <button class="layout-btn" data-layout="hierarchical" title="Arquitectura jerárquica por capas de abstracción">
+          <button class="layout-btn" data-layout="hierarchical"
+            title="Arquitectura jerárquica por capas de abstracción">
             <span class="layout-icon">☰</span> Jerárquico
           </button>
           <button class="layout-btn" data-layout="clustered" title="Islas agrupadas por rol / especialidad">
@@ -101,8 +104,9 @@
           <span class="mono-label">CONTROLES DEL GRAFO</span>
         </div>
         <p class="hint-text">
-          • <strong>Clic en un nodo:</strong> Inspeccionar paquetes <code>.deb</code>, repositorios oficiales, tuning del kernel y comandos.<br/>
-          • <strong>Arrastrar nodo:</strong> Fijar/reorganizar física de la topología.<br/>
+          • <strong>Clic en un nodo:</strong> Inspeccionar paquetes <code>.deb</code>, repositorios oficiales, tuning
+          del kernel y comandos.<br />
+          • <strong>Arrastrar nodo:</strong> Fijar/reorganizar física de la topología.<br />
           • <strong>Scroll / Pinch:</strong> Zoom sobre subsistemas.
         </p>
         <div class="graph-btn-row">
@@ -191,7 +195,10 @@
 
       <div class="modal-body">
         <p class="modal-desc">
-          Imagen ISO híbrida construida con <strong><code>live-build</code></strong> e instalador gráfico <strong>Calamares</strong>. Incluye perfiles de particionado <strong>XFS (OLTP)</strong> y <strong>OpenZFS (OLAP)</strong>, repositorios oficiales <strong>PGDG</strong> y todo el árbol de herramientas visualizado en el grafo.
+          Imagen ISO híbrida construida con <strong><code>live-build</code></strong> e instalador gráfico
+          <strong>Calamares</strong>. Incluye perfiles de particionado <strong>XFS (OLTP)</strong> y <strong>OpenZFS
+            (OLAP)</strong>, repositorios oficiales <strong>PGDG</strong> y todo el árbol de herramientas visualizado en
+          el grafo.
         </p>
 
         <div class="iso-meta-grid">
@@ -229,8 +236,10 @@
         <a href="/api/v1/download/latest" target="_blank" rel="noopener" class="btn-download-primary">
           Descargar ISO vía GitHub Releases / S3 &rarr;
         </a>
-        <p style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.65rem; text-align: center; line-height: 1.4;">
-          LXDEC OS es una distribución derivada independiente basada en Debian GNU/Linux. No está afiliada ni respaldada oficialmente por Software in the Public Interest, Inc. ni por el Proyecto Debian.
+        <p
+          style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.65rem; text-align: center; line-height: 1.4;">
+          LXDEC OS es una distribución derivada independiente basada en Debian GNU/Linux. No está afiliada ni respaldada
+          oficialmente por Software in the Public Interest, Inc. ni por el Proyecto Debian.
         </p>
       </div>
     </div>
@@ -238,4 +247,5 @@
 
   <script src="/static/js/app.js"></script>
 </body>
+
 </html>

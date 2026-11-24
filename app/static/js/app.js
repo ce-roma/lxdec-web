@@ -31,7 +31,7 @@ async function initApp() {
   });
 
   populateHUD(data);
-  setupFilters(data.categories);
+  setupSearch();
   setupLayoutSwitcher();
   setupModal(data.release);
   initGraph();
@@ -48,36 +48,46 @@ function populateHUD(data) {
 
   const legendList = document.getElementById("legend-list");
   legendList.innerHTML = "";
-  data.categories.forEach((cat) => {
+
+  const legendItems = [
+    {
+      id: "all",
+      label: "Toda la Topología",
+      description: "Vista completa de todas las capas y subsistemas",
+      color: "var(--accent-cyan)",
+    },
+    ...data.categories,
+  ];
+
+  legendItems.forEach((cat) => {
     const li = document.createElement("li");
     li.className = "legend-item";
-    li.innerHTML = `
+
+    const link = document.createElement("a");
+    link.href = `#categoria-${cat.id}`;
+    link.className = `legend-link${cat.id === state.activeCategory ? " active" : ""}`;
+    link.dataset.category = cat.id;
+    if (cat.id === state.activeCategory) {
+      link.setAttribute("aria-current", "true");
+    }
+    link.innerHTML = `
       <span class="legend-dot" style="background:${cat.color}; box-shadow: 0 0 8px ${cat.color}"></span>
-      <div>
-        <strong>${cat.label}</strong>
+      <span class="legend-content">
+        <strong class="legend-title">${cat.label}</strong>
         <span class="legend-desc">${cat.description}</span>
-      </div>
+      </span>
     `;
-    li.addEventListener("click", () => applyCategoryFilter(cat.id));
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      applyCategoryFilter(cat.id);
+    });
+
+    li.appendChild(link);
     legendList.appendChild(li);
   });
 }
 
-function setupFilters(categories) {
-  const container = document.getElementById("category-filters");
-  categories.forEach((cat) => {
-    const btn = document.createElement("button");
-    btn.className = "filter-pill";
-    btn.dataset.category = cat.id;
-    btn.innerHTML = `<span class="legend-dot" style="width:8px;height:8px;background:${cat.color};margin:0"></span>${cat.label}`;
-    btn.addEventListener("click", () => applyCategoryFilter(cat.id));
-    container.appendChild(btn);
-  });
-
-  container.querySelector('[data-category="all"]').addEventListener("click", () => {
-    applyCategoryFilter("all");
-  });
-
+function setupSearch() {
   const searchInput = document.getElementById("node-search");
   searchInput.addEventListener("input", (e) => {
     state.searchQuery = e.target.value.trim().toLowerCase();
@@ -122,8 +132,14 @@ function setupLayoutSwitcher() {
 
 function applyCategoryFilter(categoryId) {
   state.activeCategory = categoryId;
-  document.querySelectorAll(".filter-pill").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.category === categoryId);
+  document.querySelectorAll(".legend-link").forEach((link) => {
+    const isActive = link.dataset.category === categoryId;
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "true");
+    } else {
+      link.removeAttribute("aria-current");
+    }
   });
   updateVisualVisibility();
 }
