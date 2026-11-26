@@ -1,0 +1,68 @@
+# ==============================================================================
+# LXDEC OS (Debian 13 Trixie) — Data Engineering, Multi-Paradigm PG & Backend
+# 100% Native Debian 13 (Trixie) Main Packages
+# ==============================================================================
+
+# --- Multi-Paradigm PostgreSQL & DBA Suite ---
+postgresql
+postgresql-common
+postgresql-contrib
+pgcli
+pspg
+pgbouncer
+pgbackrest
+pgbadger
+pgtop
+usql
+sqlite3
+redis-tools
+unixodbc
+odbc-postgresql
+sysbench
+
+# --- Data Engineering & OLAP ---
+python3-pyarrow
+python3-pandas
+python3-numpy
+python3-venv
+pipx
+kcat
+librdkafka-dev
+direnv
+jq
+yq
+git
+tmux
+
+# --- Backend Runtimes & Networking ---
+python3-full
+python3-fastapi
+python3-uvicorn
+python3-psycopg
+python3-sqlalchemy
+rustc
+cargo
+golang-go
+build-essential
+clang
+mold
+httpie
+wrk
+protobuf-compiler
+haproxy
+nginx
+
+# --- Containers, IaC & Kernel Observability (eBPF) ---
+podman
+buildah
+skopeo
+docker.io
+docker-compose
+ansible
+bpfcc-tools
+bpftrace
+btop
+iotop-c
+htop
+sysstat
+

@@ -40,7 +40,7 @@ async function initApp() {
 
 function populateHUD(data) {
   document.getElementById("distro-tagline").textContent = data.metadata.tagline;
-  document.getElementById("meta-base").textContent = "Debian 12 (Deriv.)";
+  document.getElementById("meta-base").textContent = "Debian 13 (Trixie)";
   document.getElementById("meta-kernel").textContent = data.release.kernel;
   document.getElementById("meta-arch").textContent = "amd64 / arm64";
   document.getElementById("meta-count").textContent = `${data.nodes.length} Nodos / ${data.links.length} Enlaces`;
@@ -481,7 +481,7 @@ function applyLayout(layoutName) {
       "LAYER 4 // BACKEND RUNTIMES, APIs & CLOUD CONTAINERS",
       "LAYER 3 // DATA ENGINEERING, OLAP & STREAMING",
       "LAYER 2 // MULTI-PARADIGM POSTGRESQL (ACID / GRAPH / JSONB / VECTOR)",
-      "LAYER 1 // DEBIAN 12 CORE KERNEL, XFS/ZFS STORAGE, APT & eBPF",
+      "LAYER 1 // DEBIAN 13 TRIXIE CORE KERNEL 6.12, STORAGE, APT & eBPF",
     ];
 
     // Draw horizontal tier guide lines and labels

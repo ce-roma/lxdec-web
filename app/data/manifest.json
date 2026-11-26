@@ -1,43 +1,43 @@
 {
   "metadata": {
     "name": "LXDEC OS",
-    "tagline": "Independent Debian-based OS Engineered for Data Engineering, Multi-Paradigm PostgreSQL DBA & Backend Systems",
-    "base": "Debian 12 (Bookworm Stable) — 100% Native APT & Official PGDG",
-    "kernel": "Linux 6.1 LTS / 6.11 Backports + Custom sysctl I/O Profiles",
+    "tagline": "Independent Debian 13 (Trixie) Derivative Engineered for Data Engineering, Multi-Paradigm PostgreSQL & Backend",
+    "base": "Debian 13 (Trixie Stable) — 100% Native APT & Official PGDG",
+    "kernel": "Linux 6.12 LTS + Custom sysctl I/O & TCP BBR Profiles",
     "architecture": ["amd64 (x86_64)", "arm64 (aarch64)"],
-    "init": "systemd + Calamares Graphical Installer (live-build)",
-    "filesystem_defaults": ["XFS (16K/64K Direct I/O tuned)", "OpenZFS", "ext4"]
+    "init": "systemd + XFCE + Calamares Graphical Installer (live-build)",
+    "filesystem_defaults": ["XFS (16K/64K Direct I/O tuned)", "OpenZFS", "Btrfs"]
   },
   "categories": [
     {
       "id": "core",
       "label": "Core System & Kernel",
       "color": "#38bdf8",
-      "description": "100% paquetes nativos de Debian 12 Stable (main & backports), instalador Calamares (live-build) y tuning sysctl sin binarios huérfanos."
+      "description": "100% paquetes nativos de Debian 13 Stable (Trixie), Kernel 6.12 LTS, escritorio XFCE ligero, instalador Calamares (live-build) y tuning sysctl."
     },
     {
       "id": "dba",
       "label": "Multi-Paradigm PostgreSQL & DBA",
       "color": "#a855f7",
-      "description": "PostgreSQL PGDG como motor universal: Relacional, Grafos (Apache AGE / Cypher), Documental (JSONB), Vectorial (pgvector) y Geoespacial."
+      "description": "PostgreSQL 17 nativo + PGDG como motor universal: Relacional, Grafos (Apache AGE / Cypher), Documental (JSONB), Vectorial (pgvector) y usql."
     },
     {
       "id": "data_eng",
       "label": "Data Engineering & OLAP",
       "color": "#22c55e",
-      "description": "Apache Arrow nativo, kafkacat (kcat), librdkafka y gestión limpia de herramientas Python/OLAP mediante pipx y python3-venv."
+      "description": "Apache Arrow nativo, kcat (librdkafka) y gestión limpia de herramientas Python/OLAP mediante pipx y python3-venv."
     },
     {
       "id": "backend",
       "label": "Backend & Runtime Stack",
       "color": "#f59e0b",
-      "description": "Toolchains oficiales de Debian Stable (Python 3.11+, Rust/Cargo, Go, Clang, linker Mold) y testing con HTTPie y wrk."
+      "description": "Toolchains oficiales de Debian 13 Trixie (Python 3.13, Rust/Cargo, Go, Clang, linker Mold) y testing con HTTPie, wrk y HAProxy."
     },
     {
       "id": "observability",
       "label": "Observability & Containers",
       "color": "#ec4899",
-      "description": "Trazabilidad eBPF nativa en kernel (bpfcc-tools, bpftrace), contenedores Podman/Docker y automatización con Ansible."
+      "description": "Trazabilidad eBPF nativa en kernel 6.12 (bpfcc-tools, bpftrace), Podman 5 / Docker y automatización con Ansible."
     }
   ],
   "nodes": [
@@ -46,63 +46,63 @@
       "label": "LXDEC Kernel Core",
       "category": "core",
       "radius": 34,
-      "version": "26.11-deb12",
-      "package": "linux-image-amd64 systemd-sysv procps",
-      "role": "Debian 12 Stable Base + Tuned Kernel",
-      "summary": "Construido estrictamente con paquetes nativos de Debian 12 Stable y bookworm-backports. Cero binarios compilados a mano (.tar.bz2) para garantizar actualizaciones de seguridad automáticas vía APT.",
+      "version": "26.11-deb13",
+      "package": "linux-image-amd64 systemd-sysv xfce4 calamares",
+      "role": "Debian 13 Trixie Base + Linux 6.12 LTS",
+      "summary": "Construido estrictamente con paquetes nativos de Debian 13 (Trixie) Stable mediante live-build. Kernel 6.12 LTS de fábrica sin binarios compilados a mano ni tarballs huérfanos.",
       "specs": [
-        "Instalador gráfico Calamares + configuración declarativa en Debian live-build",
-        "vm.swappiness=1 & Transparent HugePages (madvise) en /etc/sysctl.d/99-lxdec.conf",
+        "Escritorio XFCE ligero + instalador gráfico Calamares (UEFI + BIOS híbrido)",
+        "vm.swappiness=1, vm.dirty_ratio=15 y vm.overcommit_memory=1 en /etc/sysctl.d/99-lxdec.conf",
         "vm.max_map_count=1048576 y net.core.somaxconn=65535 con TCP BBR habilitado",
-        "glibc estable e inmutable para prevenir corrupción de índices B-Tree en PostgreSQL"
+        "glibc estable de Debian 13 para integridad de índices B-Tree en PostgreSQL"
       ],
       "cli_check": "uname -r && sysctl vm.swappiness net.ipv4.tcp_congestion_control"
     },
     {
       "id": "zfs-xfs-storage",
-      "label": "Storage Layer (XFS / OpenZFS)",
+      "label": "Storage Layer (XFS / Btrfs / LVM)",
       "category": "core",
       "radius": 22,
-      "version": "bookworm-main",
-      "package": "xfsprogs zfsutils-linux btrfs-progs lvm2",
+      "version": "trixie-main",
+      "package": "xfsprogs btrfs-progs lvm2 parted gparted",
       "role": "Transactional & Columnar Filesystems",
-      "summary": "Soporte nativo de sistemas de archivos empresariales desde los repositorios oficiales de Debian 12 (main y contrib).",
+      "summary": "Soporte nativo de sistemas de archivos empresariales desde los repositorios oficiales de Debian 13 Trixie.",
       "specs": [
         "Perfiles XFS noatime,logbsize=256k optimizados para WAL y páginas de 8KB/16KB de PostgreSQL",
-        "Datasets OpenZFS con compresión LZ4/ZSTD para almacenamiento analítico y JSONB",
-        "Gestión de volúmenes lógicos LVM2 y RAID por software mdadm incluidos"
+        "Soporte Btrfs y LVM2 para snapshots atómicos antes de actualizaciones",
+        "Herramientas de particionado guiado (parted, gparted, dosfstools) incluidas en Live USB"
       ],
-      "cli_check": "xfs_info / && zpool version"
+      "cli_check": "xfs_info / && lvs"
     },
     {
       "id": "apt-vendor-repos",
       "label": "APT + Nala + Official PGDG",
       "category": "core",
       "radius": 21,
-      "version": "apt 2.6 / nala 0.12",
+      "version": "apt 3.0 / nala",
       "package": "apt nala postgresql-common ca-certificates gnupg",
       "role": "Zero-Maintenance Package Policy",
-      "summary": "Política de mantenimiento sostenible: solo se utilizan los repositorios oficiales de Debian 12 (main/backports) y el repositorio oficial PGDG (apt.postgresql.org) mantenido por la comunidad PostgreSQL/Debian.",
+      "summary": "Política de mantenimiento sostenible: repositorios oficiales de Debian 13 (main/contrib) y el repositorio oficial PGDG (apt.postgresql.org) activado automáticamente en el hook de live-build.",
       "specs": [
-        "Nala (nativo en Debian 12 main) para descargas paralelas e historial de rollback (nala history undo)",
-        "Activación oficial de PGDG mediante /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh",
+        "Nala preinstalado para descargas paralelas e historial transaccional (nala history undo)",
+        "Activación oficial de PGDG para Trixie vía /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh",
         "100% licencias libres (PostgreSQL / Apache 2.0 / GPL / MIT) sin restricciones SSPL"
       ],
       "cli_check": "nala --version && apt-cache policy postgresql-common"
     },
     {
       "id": "postgresql-suite",
-      "label": "PostgreSQL PGDG Core & HA",
+      "label": "PostgreSQL 17 PGDG Core & HA",
       "category": "dba",
       "radius": 28,
-      "version": "16 / 17 Multi-Cluster",
-      "package": "postgresql-16 postgresql-17 postgresql-common pgbouncer pgbackrest patroni",
+      "version": "17 LTS Multi-Cluster",
+      "package": "postgresql postgresql-common postgresql-contrib pgbouncer pgbackrest",
       "role": "Primary ACID Transactional Engine",
-      "summary": "Motor central multiparadigma gestionado con postgresql-common de Debian y PGDG, permitiendo ejecutar múltiples clústeres simultáneos con alta disponibilidad y backups incrementales.",
+      "summary": "PostgreSQL 17 nativo de Debian 13 Trixie más el repositorio PGDG, permitiendo ejecutar múltiples clústeres simultáneos con pooling y respaldos incrementales.",
       "specs": [
         "Gestión nativa de clústeres en paralelo: pg_lsclusters, pg_createcluster, pg_ctlcluster",
-        "Alta disponibilidad y pooling en APT: PgBouncer, Patroni, pgBackRest y repmgr",
-        "Mantenimiento sin bloqueo y seguridad: postgresql-17-repack, postgresql-17-cron, postgresql-17-pgaudit"
+        "Alta disponibilidad y pooling en APT: PgBouncer, pgBackRest y herramientas contrib oficiales",
+        "Servicios pesados desactivados por defecto en modo Live USB para arranque rápido"
       ],
       "cli_check": "pg_lsclusters && pgbouncer --version"
     },
@@ -111,87 +111,87 @@
       "label": "PG Extensions: Graph (Cypher) + JSONB + Vector",
       "category": "dba",
       "radius": 26,
-      "version": "AGE 1.5 / pgvector 0.8",
-      "package": "postgresql-16-age postgresql-17-pgvector postgresql-17-postgis-3 postgresql-17-partman",
+      "version": "AGE / pgvector / PostGIS",
+      "package": "postgresql-17-age postgresql-17-pgvector postgresql-17-postgis-3 postgresql-17-partman",
       "role": "Graph (OpenCypher), Document (JSONB), Vector & Spatial",
-      "summary": "Reemplaza motores aislados como MongoDB o Neo4j consolidando Grafos (Apache AGE con consultas Cypher), Documentos (JSONB + índices GIN), Vectores (pgvector) y GIS (PostGIS) dentro de PostgreSQL.",
+      "summary": "Consolida Grafos (Apache AGE con consultas Cypher), Documentos (JSONB + índices GIN), Vectores (pgvector) y GIS (PostGIS) dentro de un único motor ACID PostgreSQL 17.",
       "specs": [
         "Grafos (Apache AGE en PGDG): Consultas híbridas SQL + OpenCypher MATCH (a)-[r]->(b) RETURN a",
-        "Documental (NoSQL en Postgres): Tipo nativo JSONB con índices GIN, operadores SQL/JSON Path y esquemas flexibles sin licencia SSPL",
-        "IA & Vectores: postgresql-17-pgvector con índices HNSW/IVFFlat para embeddings + PostGIS 3 y pg_partman"
+        "Documental (NoSQL en Postgres): Tipo nativo JSONB con índices GIN y operadores SQL/JSON Path",
+        "IA & Vectores: postgresql-17-pgvector con índices HNSW/IVFFlat + PostGIS 3 y pg_partman"
       ],
       "cli_check": "psql -c \"SELECT name, default_version FROM pg_available_extensions WHERE name IN ('age','vector','postgis','pg_partman');\""
     },
     {
       "id": "redis-valkey",
-      "label": "Redis + SQLite3 Embedded",
+      "label": "Redis Tools + SQLite3 Embedded",
       "category": "dba",
       "radius": 21,
-      "version": "7.0 / 3.40 (Bookworm)",
-      "package": "redis-server redis-tools sqlite3 sqlite3-tools",
-      "role": "In-Memory Cache & Local Edge Storage",
-      "summary": "Complementos ultraligeros 100% nativos de Debian 12 Stable: Redis para caché efímera sub-milisegundo y SQLite3 con JSON1/FTS5 para catálogos locales de archivo único.",
+      "version": "Trixie Native",
+      "package": "redis-tools sqlite3",
+      "role": "In-Memory Cache CLI & Local Edge Storage",
+      "summary": "Complementos ultraligeros 100% nativos de Debian 13 Trixie: herramientas CLI para Redis/Valkey y SQLite3 con JSON1/FTS5 para catálogos locales.",
       "specs": [
-        "redis-server y redis-tools preconfigurados con vm.overcommit_memory=1 en sysctl",
-        "sqlite3-tools nativo con soporte de consultas JSON y búsqueda de texto completo FTS5",
-        "Integración mediante Foreign Data Wrappers (redis_fdw / sqlite_fdw en PGDG) hacia PostgreSQL"
+        "redis-cli y redis-benchmark listos para auditar cachés y colas de alta concurrencia",
+        "sqlite3 nativo con soporte de consultas JSON y búsqueda de texto completo FTS5",
+        "vm.overcommit_memory=1 preconfigurado en el perfil sysctl de LXDEC OS"
       ],
       "cli_check": "redis-cli --version && sqlite3 --version"
     },
     {
       "id": "dba-diagnostics",
-      "label": "PG Profiler, FDW & CLI Suite",
+      "label": "usql + pgcli + pspg + Profiler Suite",
       "category": "dba",
       "radius": 22,
-      "version": "Bookworm + PGDG",
-      "package": "pgcli pspg pgbadger pgtop postgresql-17-tds-fdw unixodbc odbc-postgresql sysbench",
-      "role": "Query Profiling, Federation & Benchmarking",
-      "summary": "Herramientas nativas de diagnóstico profundo para DBAs PostgreSQL, federación de datos mediante Foreign Data Wrappers (FDW) y pruebas de estrés transaccional.",
+      "version": "Trixie Native",
+      "package": "usql pgcli pspg pgbadger pgtop unixodbc odbc-postgresql sysbench",
+      "role": "Universal SQL CLI, Profiling & Benchmarking",
+      "summary": "Ventaja directa de Debian 13 Trixie: incluye usql (CLI universal multi-motor) de forma 100% nativa en APT junto con pgcli, pspg, pgBadger, unixODBC y sysbench.",
       "specs": [
-        "Terminal interactiva avanzada: pgcli (autocompletado) + pspg (paginador tabular para matrices JSONB y Grafos)",
-        "Federación de datos en PGDG: tds_fdw (conecta Postgres con SQL Server), ogr_fdw y postgres_fdw",
-        "Auditoría de rendimiento: pg_top, pgBadger (analizador de logs), pgbench y sysbench"
+        "usql nativo en Debian 13 main para conectarse a múltiples motores con comandos tipo psql",
+        "pgcli (autocompletado) + pspg (paginador tabular para matrices JSONB y Grafos)",
+        "Auditoría de rendimiento y discos NVMe: pg_top, pgBadger, pgbench y sysbench"
       ],
-      "cli_check": "pgcli --version && pspg --version && sysbench --version"
+      "cli_check": "usql --version && pgcli --version && pspg --version"
     },
     {
       "id": "duckdb-polars",
       "label": "PyArrow + Pandas + Venv OLAP",
       "category": "data_eng",
       "radius": 26,
-      "version": "Bookworm + PyPI",
+      "version": "Trixie + PyPI",
       "package": "python3-pyarrow python3-pandas python3-numpy python3-venv pipx",
       "role": "Columnar Memory & Isolated Data Tools",
-      "summary": "Combina las librerías C++/Cython compiladas en Debian 12 (PyArrow, NumPy, Pandas) con pipx/venv nativos para instalar motores analíticos en el espacio de usuario sin ensuciar APT.",
+      "summary": "Combina las librerías C++/Cython compiladas en Debian 13 (PyArrow, NumPy, Pandas) con pipx/venv nativos para instalar DuckDB o Polars en el espacio de usuario sin ensuciar APT.",
       "specs": [
-        "python3-pyarrow, python3-numpy y python3-pandas nativos de Debian 12 main",
-        "Extracción directa Zero-Copy desde tablas y columnas JSONB de PostgreSQL hacia Parquet/Arrow",
+        "python3-pyarrow, python3-numpy y python3-pandas nativos de Debian 13 main",
+        "Extracción directa Zero-Copy desde PostgreSQL hacia Parquet y Apache Arrow",
         "pipx nativo preinstalado para gestionar CLIs de datos (duckdb, visidata) de forma aislada"
       ],
       "cli_check": "python3 -c \"import pyarrow, pandas; print(pyarrow.__version__)\""
     },
     {
       "id": "kafka-redpanda",
-      "label": "kafkacat (kcat) & librdkafka",
+      "label": "kcat & librdkafka Streaming",
       "category": "data_eng",
       "radius": 23,
-      "version": "1.7 / 2.0",
-      "package": "kafkacat librdkafka-dev python3-confluent-kafka",
+      "version": "Trixie Native",
+      "package": "kcat librdkafka-dev",
       "role": "Native Event Streaming & CDC Pipelines",
-      "summary": "Herramientas en C de alto rendimiento disponibles directamente en Debian 12 main para consumir eventos CDC (Logical Replication de PostgreSQL) y depurar clústeres Kafka.",
+      "summary": "Herramientas en C de alto rendimiento disponibles nativamente como kcat en Debian 13 Trixie para consumir eventos CDC (Logical Replication de PostgreSQL) y depurar clústeres Kafka.",
       "specs": [
-        "kafkacat (kcat) nativo en Debian 12 con soporte JSON, SASL y TLS",
+        "kcat nativo en Debian 13 main con soporte JSON, SASL y TLS",
         "Compatibilidad con replicación lógica de PostgreSQL (wal2json en PGDG) hacia tópicos de streaming",
-        "Librería C/C++ librdkafka-dev y bindings oficiales python3-confluent-kafka en APT"
+        "Librería C/C++ librdkafka-dev lista para compilar productores/consumidores de baja latencia"
       ],
-      "cli_check": "kafkacat -V"
+      "cli_check": "kcat -V"
     },
     {
       "id": "orchestration-elt",
       "label": "pipx + Direnv + jq / yq Data CLI",
       "category": "data_eng",
       "radius": 22,
-      "version": "Bookworm Native",
+      "version": "Trixie Native",
       "package": "pipx direnv jq yq git tmux",
       "role": "Reproducible Data & JSON Pipelines",
       "summary": "El sistema base provee pipx, direnv, jq, yq y git desde APT, permitiendo transformar payloads JSON hacia JSONB de PostgreSQL y aislar proyectos dbt o Airflow.",
@@ -204,17 +204,17 @@
     },
     {
       "id": "backend-runtimes",
-      "label": "Python 3.11 + Rust + Go + Mold",
+      "label": "Python 3.13 + Rust + Go + Mold",
       "category": "backend",
       "radius": 25,
-      "version": "3.11 / 1.70+ / 1.19+",
-      "package": "python3-full python3-fastapi python3-uvicorn python3-psycopg2 python3-sqlalchemy rustc cargo golang-go clang mold",
-      "role": "100% Native Debian Backend Toolchains",
-      "summary": "Compiladores, drivers PostgreSQL y frameworks web disponibles directamente en los repositorios oficiales de Debian 12, incluyendo el linker ultrarrápido mold.",
+      "version": "3.13 / Trixie",
+      "package": "python3-full python3-fastapi python3-uvicorn python3-psycopg python3-sqlalchemy rustc cargo golang-go clang mold",
+      "role": "100% Native Debian 13 Backend Toolchains",
+      "summary": "Compiladores modernos, driver psycopg 3 para PostgreSQL y frameworks web disponibles directamente en Debian 13 Trixie, incluyendo el linker ultrarrápido mold.",
       "specs": [
-        "Stack Python en APT: FastAPI, Uvicorn, SQLAlchemy y drivers PostgreSQL con soporte nativo para JSONB y grafos AGE",
-        "Compiladores oficiales rustc, cargo, golang-go, gcc y clang con linker mold para compilación acelerada",
-        "Compatibilidad binaria 100% idéntica a los contenedores python:3.11-slim-bookworm de producción"
+        "Stack Python 3.13 en APT: FastAPI, Uvicorn, SQLAlchemy 2 y psycopg 3 asíncrono",
+        "Compiladores oficiales rustc, cargo, golang-go, gcc y clang con linker mold",
+        "Compatibilidad binaria 100% idéntica a contenedores Debian Trixie en producción"
       ],
       "cli_check": "python3 --version && rustc --version && go version && mold --version"
     },
@@ -223,10 +223,10 @@
       "label": "HTTPie + wrk + Nginx / HAProxy",
       "category": "backend",
       "radius": 21,
-      "version": "Bookworm Native",
+      "version": "Trixie Native",
       "package": "httpie curl wrk protobuf-compiler haproxy nginx",
       "role": "API Benchmarking & TCP/PG Load Balancing",
-      "summary": "Suite de red, balanceo TCP para réplicas PostgreSQL (HAProxy) y pruebas de carga HTTP compuesta exclusivamente por paquetes oficiales de Debian 12.",
+      "summary": "Suite de red, balanceo TCP para réplicas PostgreSQL (HAProxy) y pruebas de carga HTTP compuesta exclusivamente por paquetes oficiales de Debian 13.",
       "specs": [
         "HAProxy preinstalado para balanceo de carga TCP entre nodo primario y réplicas de lectura de PostgreSQL",
         "Cliente interactivo HTTPie y curl con soporte HTTP/2 y formateo JSON nativo",
@@ -236,16 +236,16 @@
     },
     {
       "id": "containers-iac",
-      "label": "Podman + Docker + Ansible IaC",
+      "label": "Podman 5 + Docker + Ansible IaC",
       "category": "observability",
       "radius": 24,
-      "version": "4.3 / 20.10+ / 7.7",
+      "version": "Trixie Native",
       "package": "podman buildah skopeo docker.io docker-compose ansible",
       "role": "Rootless Containers & DB Automation",
-      "summary": "Contenedores rootless con Podman, Buildah y Skopeo junto con Docker y Ansible directamente desde Debian 12 main para aprovisionar clústeres de datos.",
+      "summary": "Contenedores rootless modernos con Podman 5, Buildah y Skopeo junto con Docker y Ansible directamente desde Debian 13 main.",
       "specs": [
-        "Podman + Buildah + Skopeo para construir y correr contenedores sin demonio root",
-        "docker.io y docker-compose nativos de Debian para levantar laboratorios de datos locales",
+        "Podman 5 + Buildah + Skopeo para construir y correr contenedores sin demonio root",
+        "docker.io y docker-compose nativos de Debian para laboratorios de datos locales",
         "Automatización declarativa de clústeres PostgreSQL y servidores con Ansible preinstalado"
       ],
       "cli_check": "podman --version && docker --version && ansible --version"
@@ -255,13 +255,13 @@
       "label": "eBPF (bpfcc) + bpftrace + btop",
       "category": "observability",
       "radius": 22,
-      "version": "0.26 / 0.17 / 1.2",
-      "package": "bpfcc-tools bpftrace linux-perf btop iotop-c htop sysstat",
-      "role": "Kernel & PostgreSQL I/O Observability",
-      "summary": "Suite de observabilidad eBPF 100% nativa en Debian 12 Bookworm para trazar latencias de disco en checkpoints de PostgreSQL, locks y tráfico TCP.",
+      "version": "Kernel 6.12 LTS",
+      "package": "bpfcc-tools bpftrace btop iotop-c htop sysstat",
+      "role": "Kernel 6.12 & PostgreSQL I/O Observability",
+      "summary": "Suite de observabilidad eBPF 100% nativa sobre Linux 6.12 LTS en Debian 13 Trixie para trazar latencias de disco en checkpoints de PostgreSQL, locks y tráfico TCP.",
       "specs": [
-        "Herramientas eBPF nativas: biolatency-bpfcc, tcplife-bpfcc, xfsslower-bpfcc, offcputime-bpfcc",
-        "Trazado de procesos backend de PostgreSQL con linux-perf, sysstat (iostat, pidstat) e iotop-c",
+        "Herramientas eBPF nativas: biolatency-bpfcc, tcplife-bpfcc, xfsslower-bpfcc, execsnoop-bpfcc",
+        "Trazado de procesos backend de PostgreSQL con bpftrace, sysstat (iostat, pidstat) e iotop-c",
         "Monitores visuales en terminal btop y htop preconfigurados"
       ],
       "cli_check": "bpftrace --version && btop --version && iostat -V"
@@ -280,14 +280,14 @@
 
     { "source": "apt-vendor-repos", "target": "postgresql-suite", "type": "pgdg-apt", "strength": 0.85 },
     { "source": "apt-vendor-repos", "target": "pg-multiparadigm", "type": "pgdg-extensions", "strength": 0.85 },
-    { "source": "apt-vendor-repos", "target": "dba-diagnostics", "type": "bookworm-main", "strength": 0.75 },
+    { "source": "apt-vendor-repos", "target": "dba-diagnostics", "type": "trixie-main", "strength": 0.75 },
 
     { "source": "postgresql-suite", "target": "pg-multiparadigm", "type": "cypher-jsonb-vector", "strength": 0.95 },
     { "source": "zfs-xfs-storage", "target": "postgresql-suite", "type": "xfs-16k-wal", "strength": 0.75 },
     { "source": "zfs-xfs-storage", "target": "pg-multiparadigm", "type": "toast-zstd", "strength": 0.7 },
     { "source": "zfs-xfs-storage", "target": "duckdb-polars", "type": "parquet-mmap", "strength": 0.65 },
 
-    { "source": "postgresql-suite", "target": "dba-diagnostics", "type": "pgcli-pspg", "strength": 0.8 },
+    { "source": "postgresql-suite", "target": "dba-diagnostics", "type": "usql-pgcli-pspg", "strength": 0.8 },
     { "source": "pg-multiparadigm", "target": "dba-diagnostics", "type": "fdw-federation", "strength": 0.75 },
     { "source": "redis-valkey", "target": "postgresql-suite", "type": "fdw-cache", "strength": 0.65 },
 
@@ -298,11 +298,11 @@
     { "source": "kafka-redpanda", "target": "backend-runtimes", "type": "librdkafka-c", "strength": 0.75 },
 
     { "source": "backend-runtimes", "target": "api-networking", "type": "httpie-wrk", "strength": 0.85 },
-    { "source": "backend-runtimes", "target": "postgresql-suite", "type": "psycopg-pool", "strength": 0.75 },
+    { "source": "backend-runtimes", "target": "postgresql-suite", "type": "psycopg3-pool", "strength": 0.75 },
     { "source": "backend-runtimes", "target": "pg-multiparadigm", "type": "cypher-jsonb-api", "strength": 0.8 },
     { "source": "backend-runtimes", "target": "redis-valkey", "type": "async-cache", "strength": 0.7 },
 
-    { "source": "apt-vendor-repos", "target": "containers-iac", "type": "bookworm-main", "strength": 0.65 },
+    { "source": "apt-vendor-repos", "target": "containers-iac", "type": "trixie-main", "strength": 0.65 },
     { "source": "api-networking", "target": "postgresql-suite", "type": "haproxy-pg-replicas", "strength": 0.7 },
     { "source": "ebpf-telemetry", "target": "postgresql-suite", "type": "wal-io-trace", "strength": 0.75 },
     { "source": "ebpf-telemetry", "target": "containers-iac", "type": "cgroup-metrics", "strength": 0.7 }

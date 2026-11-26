@@ -1,0 +1,46 @@
+# ==============================================================================
+# LXDEC OS (Debian 13 Trixie) — Base Desktop (XFCE) & Graphical Installer
+# ==============================================================================
+
+# Live boot & kernel
+linux-image-amd64
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+firmware-linux-free
+
+# Lightweight XFCE Desktop Environment
+xfce4
+xfce4-goodies
+xfce4-terminal
+lightdm
+network-manager
+network-manager-gnome
+xorg
+dbus-x11
+fonts-jetbrains-mono
+fonts-inter
+
+# Calamares Graphical Installer
+calamares
+calamares-settings-debian
+
+# Essential system & storage tools
+sudo
+nala
+xfsprogs
+btrfs-progs
+lvm2
+dosfstools
+parted
+gparted
+ca-certificates
+gnupg
+apt-transport-https
+openssh-client
+curl
+wget
+unzip
+tar
+

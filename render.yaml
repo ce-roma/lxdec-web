@@ -13,7 +13,7 @@ services:
       - key: DISTRO_NAME
         value: "LXDEC OS"
       - key: DISTRO_VERSION
-        value: "26.11-deb12"
+        value: "26.11-deb13"
       - key: ISO_DOWNLOAD_URL
-        value: "https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb12-amd64.iso"
+        value: "https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb13-amd64.iso"
 

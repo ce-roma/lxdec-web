@@ -1,6 +1,8 @@
-# LXDEC OS (`26.11-deb12`) — Interactive System & Data Topology Portal
+# LXDEC OS (`26.11-deb13`) — Interactive System & Data Topology Portal
 
-> **LXDEC OS** es una distribución Linux derivada independiente basada en **Debian 12 (Bookworm Stable)**, diseñada específicamente para **Ingenieros de Datos, Administradores de Bases de Datos (DBAs) y Desarrolladores Backend**.
+> **LXDEC OS** es una distribución Linux derivada independiente basada en **Debian 13 (Trixie Stable)** con Kernel **6.12 LTS**, diseñada específicamente para **Ingenieros de Datos, Administradores de Bases de Datos (DBAs) y Desarrolladores Backend**.
+>
+> Portal en vivo: **[https://lxdec.org](https://lxdec.org)**
 
 Este repositorio contiene el **Portal Web Interactivo de Arquitectura y Distribución** de **LXDEC OS**, construido con **FastAPI (Python 3.12)** en el backend y un motor de visualización de grafos en **D3.js v7** en el frontend, empaquetado en **Docker** para despliegue tanto Serverless (Google Cloud Run / Render / Koyeb) como en VPS (OCI / Hetzner con Traefik).
 

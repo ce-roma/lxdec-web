@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+# ==============================================================================
+# LXDEC OS Hook: Configure Official PGDG APT Repo (Trixie) & System Identity
+# ==============================================================================
+
+echo ">>> [LXDEC Hook] Configurando repositorio oficial PostgreSQL PGDG (trixie)..."
+if [ -x /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh ]; then
+  /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y || true
+fi
+
+# Prevent heavy services from auto-starting during Live USB boot (user enables when needed)
+systemctl disable postgresql 2>/dev/null || true
+systemctl disable nginx 2>/dev/null || true
+systemctl disable haproxy 2>/dev/null || true
+systemctl disable docker 2>/dev/null || true
+
+# Custom MOTD banner for terminal sessions
+cat << 'EOF' > /etc/motd
+========================================================================
+  LXDEC OS 26.11-deb13 (Independent Debian 13 Trixie Derivative)
+  Engineered for Data Engineering, Multi-Paradigm PostgreSQL & Backend
+  Docs & Topology: https://lxdec.org
+========================================================================
+EOF
+

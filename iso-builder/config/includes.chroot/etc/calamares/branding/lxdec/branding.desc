@@ -1,0 +1,30 @@
+---
+componentName: lxdec
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 900px,580px
+windowPlacement: center
+
+strings:
+    productName:         LXDEC OS
+    shortProductName:    LXDEC
+    version:             26.11-deb13
+    shortVersion:        26.11
+    versionedName:       LXDEC OS 26.11-deb13
+    shortVersionedName:  LXDEC 26.11
+    bootloaderEntryName: LXDEC OS
+    productUrl:          https://lxdec.org
+    supportUrl:          https://lxdec.org
+
+images:
+    productLogo:         "logo.svg"
+    productIcon:         "logo.svg"
+
+style:
+   sidebarBackground:    "#070b14"
+   sidebarText:          "#94a3b8"
+   sidebarTextSelect:    "#38bdf8"
+   sidebarTextHighlight: "#f1f5f9"
+

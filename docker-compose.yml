@@ -13,8 +13,8 @@ services:
       - ENV=${ENV:-development}
       - PORT=8080
       - DISTRO_NAME=${DISTRO_NAME:-LXDEC OS}
-      - DISTRO_VERSION=${DISTRO_VERSION:-26.11-deb12}
-      - ISO_DOWNLOAD_URL=${ISO_DOWNLOAD_URL:-https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb12-amd64.iso}
+      - DISTRO_VERSION=${DISTRO_VERSION:-26.11-deb13}
+      - ISO_DOWNLOAD_URL=${ISO_DOWNLOAD_URL:-https://github.com/lxdec-os/releases/releases/latest/download/lxdec-os-26.11-deb13-amd64.iso}
       - ISO_SHA256=${ISO_SHA256:-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855}
     labels:
       - "traefik.enable=true"
